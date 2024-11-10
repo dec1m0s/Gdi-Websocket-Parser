@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group = 'ch.csch'
+version = '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.portswigger.burp.extensions:montoya-api:+'
+}
+
+jar {
+    archivesBaseName = project.name
+
+    // apparently there were multiple META-INF/LICENSE files causing problems, this eliminated the error message
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+// store generated jar in /releases
+tasks.named('jar') {
+    destinationDirectory.set(file("$rootDir/releases"))
+}
