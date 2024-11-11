@@ -42,8 +42,17 @@ public class Utils {
         StringBuilder stringBuilder = new StringBuilder();
         for (byte b : input) {
             int chr = b & 0xFF;
-            if (32 <= b && b < 127) stringBuilder.append((char) chr);
-            else stringBuilder.append(String.format("\\x%02x", b));
+            if (32 <= b && b < 127) {
+                if (b == 92)
+                    // Encode the character '\' as '\\'
+                    stringBuilder.append("\\\\");
+                else
+                    // just output the character
+                    stringBuilder.append((char) chr);
+            } else {
+                // hexadecimal character of the form \xFF
+                stringBuilder.append(String.format("\\x%02x", b));
+            }
         }
         return stringBuilder.toString();
     }
@@ -53,12 +62,21 @@ public class Utils {
         int i = 0;
         while (i < input.length()) {
             char c = input.charAt(i);
-            // Check if this is a hexadecimal character of the form \xFF
-            if (c == '\\' && (i + 3) < input.length() && input.charAt(i + 1) == 'x') {
-                String hex = input.substring(i + 2, i + 4);
-                byte[] hexByte = HexFormat.of().parseHex(hex);
-                stream.write(hexByte[0]);
-                i += 4;
+            // Check if the current character is a '\'
+            if (c == '\\') {
+                if ((i + 4) < input.length() && input.charAt(i + 1) == 'x') {
+                    // it's a hexadecimal character of the form \xFF
+                    String hex = input.substring(i + 2, i + 4);
+                    byte[] hexByte = HexFormat.of().parseHex(hex);
+                    stream.write(hexByte[0]);
+                    i += 4;
+                } else if ((i + 1) < input.length() && input.charAt(i + 1) == '\\') {
+                    // it's a character '\' encoded as '\\'
+                    stream.write((byte) '\\');
+                    i += 2;
+                } else {
+                    System.out.println("Error!");
+                }
             }
             // If not, then append it as a character
             else {
