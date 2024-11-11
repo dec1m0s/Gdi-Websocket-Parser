@@ -31,10 +31,10 @@ public class MessageEditorModifier implements ExtensionProvidedWebSocketMessageE
         // Set to read-only if this tab is open in a view that doesn't allow editing, such as the Proxy view.
         if (editorCreationContext.editorMode() == EditorMode.READ_ONLY)
         {
-            requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY);
+            requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY, EditorOptions.WRAP_LINES);
         }
         else {
-            requestEditor = api.userInterface().createRawEditor();
+            requestEditor = api.userInterface().createRawEditor(EditorOptions.WRAP_LINES);
         }
     }
 

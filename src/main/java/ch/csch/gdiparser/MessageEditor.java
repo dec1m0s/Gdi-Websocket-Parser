@@ -25,7 +25,7 @@ public class MessageEditor implements ExtensionProvidedWebSocketMessageEditor {
 
     public MessageEditor(MontoyaApi api, EditorCreationContext editorCreationContext) {
         this.api = api;
-        requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY);
+        requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY, EditorOptions.WRAP_LINES);
     }
 
     @Override
@@ -37,6 +37,7 @@ public class MessageEditor implements ExtensionProvidedWebSocketMessageEditor {
     /**
      * To display the tab, Burp calls this method to fill the editor field with custom content based on the packet.
      * This translates the packet into a somewhat readable form.
+     *
      * @param webSocketMessage Input message
      */
     @Override
